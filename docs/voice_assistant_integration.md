@@ -1,5 +1,7 @@
 # Google Home & Alexa Integration
 
+<img src="Relay-module-with-ESP8266.png" width=15% alt="ESP8266-01-5V-WiFi-Relay-Module">
+
 The Smart Switch ESP8266 can be controlled via Google Home and Alexa using Arduino IoT Cloud.
 
 ## Steps
