@@ -3,7 +3,7 @@
 Below is the recommended wiring for the Smart Switch ESP8266 project.  
 This setup supports both manual and remote (cloud/voice) control, and status feedback.
 
-![Wiring Diagram](./docs)
+![Wiring Diagram](./)
 
 **Legend:**
 - **ESP8266-01:** Main WiFi microcontroller.
