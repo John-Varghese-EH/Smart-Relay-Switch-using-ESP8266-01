@@ -15,7 +15,8 @@ The Smart Switch ESP8266 can be controlled via Google Home and Alexa using Ardui
    - "Hey Google, turn on switch one"
    - "Alexa, turn off switch one"
 
-**Tip:** The device status will always be in sync, whether toggled manually or via cloud/voice assistant.
+> [!TIP]
+> The device status will always be in sync, whether toggled manually or via cloud/voice assistant.
 
 For more, see the [Arduino IoT Cloud documentation](https://docs.arduino.cc/cloud/iot-cloud/integrations/google-home/).
 
