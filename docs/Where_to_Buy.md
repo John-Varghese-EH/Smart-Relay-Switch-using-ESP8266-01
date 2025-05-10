@@ -36,7 +36,7 @@ You can purchase the ESP8266-01 Relay Module used in this project from the follo
 
 ---
 
-## 🚧 Currently a work in progress, but I’d appreciate your support! ☺️
+## Support My Work ☺️
 <p align="left">
   <a href="https://buymeacoffee.com/CyberTrinity">
     <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" />
