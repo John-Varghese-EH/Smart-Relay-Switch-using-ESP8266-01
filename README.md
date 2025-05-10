@@ -1,4 +1,4 @@
-# Smart Switch ESP8266
+# Smart Relay Switch ESP8266-01
 
 A robust, cloud-connected smart relay switch using the ESP8266-01 and Arduino IoT Cloud.  
 Control your appliances manually, remotely, or by voice with Google Home and Alexa. Monitor real-time status, enjoy advanced features like watchdog protection and Always-On mode, and integrate seamlessly with your smart home ecosystem.
@@ -83,7 +83,7 @@ Control your appliances manually, remotely, or by voice with Google Home and Ale
     - `switch1` (Type: Switch, Read & Write)
     - `switchStatus` (Type: Contact Sensor, Read Only)
     - `messages` (Type: String, Read & Write)
-3. **Download the generated `thingProperties.h`** and replace the existing one.
+3. **Download the generated `thingProperties.h`** and replace the existing one or change accordingly.
 4. **Associate your device** (ESP8266-01) with the Thing.
 
 ---
@@ -166,7 +166,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-**Made with ❤️ by John Varghese (@Cyber__Trinity) and contributors.**
+**Made with ❤️ by John Varghese (@Cyber__Trinity).**
 
 ---
 
