@@ -17,3 +17,17 @@ Below are reference images for the relay module and ESP8266-01 integration.
 ![ESP8266-01 Pinout](esp-01-esp8266-pinout.jpg)
 
 Refer to the wiring diagram for pin connections and power requirements.
+
+---
+
+## Support My Work ☺️
+<p align="left">
+  <a href="https://buymeacoffee.com/CyberTrinity">
+    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-ffdd00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" />
+  </a>
+  <a href="https://patreon.com/CyberTrinity">
+    <img src="https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white" />
+  </a>
+</p>
+
+*Powered By: [J0X](https://github.com/John-Varghese-EH)*
