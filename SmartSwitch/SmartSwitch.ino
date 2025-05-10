@@ -1,74 +1,161 @@
 /**********************************************************************************
- *  TITLE: Smart Relay Switch using ESP8266-01 and Arduino IoT Cloud
+ *  TITLE: Arduino IoT Cloud Smart Relay Switch using ESP01
  *  Author: John Varghese (@Cyber__Trinity)
- *  Version: 1.0
+ *  Version: 2.0
  *
- *  Preferences--> Additional boards Manager URLs : 
- *  https://dl.espressif.com/dl/package_esp32_index.json,
- *  http://arduino.esp8266.com/stable/package_esp8266com_index.json
- *  Download Board ESP8266 : https://github.com/esp8266/Arduino
- *  Download the libraries:
- *    - ArduinoIoTCloud Library with all dependencies
+ *  Description:
+ *  ESP8266-based smart relay switch with manual/cloud control and status reporting.
+ *  Features watchdog timer, always-on mode, and cloud message handling.
  *
- *  Arduino IoT Cloud Variables:
- *    CloudContactSensor switchStatus;
- *    CloudSwitch switch1;
+ *  Requirements:
+ *  - ESP8266 board package
+ *  - ArduinoIoTCloud library
+ *  - Ticker library
+ *  - Thing variables:
+ *      CloudContactSensor switchStatus;
+ *      CloudSwitch switch1;
+ *      String messages;
  **********************************************************************************/
 
 #include "thingProperties.h"
 #include <ESP8266WiFi.h>
+#include <Ticker.h>
 
-// Define the GPIO connected with Relay and status LED/switch
-#define RelayPin 0      // GPIO0 controls relay
-#define StatusPin 2     // GPIO2 reads status (input, e.g., manual switch or relay feedback)
-bool Status = false;    // Local status variable
+// GPIO pin definitions
+#define RELAY_PIN 0    // GPIO0 controls relay
+#define STATUS_PIN 2   // GPIO2 reads manual switch state
+
+// Watchdog Timer
+Ticker watchdogTicker;
+volatile int watchdogCount = 0;
+const int WATCHDOG_TIMEOUT = 4; // 4 intervals * 5s = 20s timeout
+
+// AlwaysOn mode control
+bool alwaysOnMode = false;
+unsigned long lastSwitchToggle = 0;
+const unsigned long debounceTime = 1000; // ms debounce
+
+// State management
+bool currentRelayState = false;
+bool currentSwitchState = false;
+
+void ISRwatchdog() {
+  watchdogCount++;
+  if (watchdogCount >= WATCHDOG_TIMEOUT) {
+    Serial.println("Watchdog timeout! Rebooting...");
+    ESP.restart();
+  }
+}
 
 void setup() {
   Serial.begin(115200);
   delay(500);
 
-  // Initialize Arduino IoT Cloud properties
+  // Initialize GPIO
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, HIGH); // Relay OFF
+  currentRelayState = false;
+  pinMode(STATUS_PIN, INPUT_PULLUP);
+
+  // WiFi Connection
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(SSID, PASS);
+  WiFi.setAutoReconnect(true);
+  
+  Serial.print("Connecting to WiFi");
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED && attempts < 40) {
+    delay(500);
+    Serial.print(".");
+    attempts++;
+  }
+
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("\nWiFi failed! Rebooting...");
+    ESP.restart();
+  }
+
+  // Arduino IoT Cloud
   initProperties();
-
-  // Connect to Arduino IoT Cloud
   ArduinoCloud.begin(ArduinoIoTPreferredConnection);
-
   setDebugMessageLevel(2);
   ArduinoCloud.printDebugInfo();
 
-  pinMode(RelayPin, OUTPUT);
-  pinMode(StatusPin, INPUT_PULLUP); // Set GPIO2 as input with pull-up resistor
-
-  // At startup, ensure relay is OFF
-  digitalWrite(RelayPin, HIGH);
+  // Initial states
+  switch1 = false;
+  watchdogTicker.attach(5, ISRwatchdog);
+  Serial.println("System ready");
 }
-
-bool updateSent = false;
 
 void loop() {
   ArduinoCloud.update();
+  watchdogCount = 0; // Reset watchdog
 
-  bool currentStatus = (digitalRead(StatusPin) == LOW); // LOW = ON (active low)
-  if (currentStatus != switchStatus) {
-    switchStatus = currentStatus;
+  bool switchState = (digitalRead(STATUS_PIN) == LOW);
+  bool relayState = (digitalRead(RELAY_PIN) == LOW);
+  unsigned long now = millis();
+
+  // AlwaysOn logic
+  if (alwaysOnMode) {
+    if (!switchState && (now - lastSwitchToggle >= debounceTime)) {
+      digitalWrite(RELAY_PIN, !relayState);
+      currentRelayState = !relayState;
+      switch1 = currentRelayState;
+      lastSwitchToggle = now;
+      messages = "[AlwaysOn] Toggling relay";
+      ArduinoCloud.update();
+    }
+  }
+
+  // State change detection
+  if (!alwaysOnMode && switchState != currentSwitchState) {
+    currentSwitchState = switchState;
+    switchStatus = switchState;
+    messages = "Switch: " + String(switchState ? "ON" : "OFF");
     ArduinoCloud.update();
-    if (!updateSent) {
-      Serial.print("Switch Status updated to: ");
-      Serial.println(switchStatus ? "ON" : "OFF");
-      updateSent = true;
+  }
+
+  ArduinoCloud.update();
+}
+
+void onSwitch1Change() {
+  if (!alwaysOnMode) {
+    if (switch1 != currentRelayState) {
+      currentRelayState = switch1;
+      digitalWrite(RELAY_PIN, switch1 ? LOW : HIGH);
+      messages = "Relay " + String(switch1 ? "ON" : "OFF") + " (Cloud)";
+      ArduinoCloud.update();
     }
   } else {
-    updateSent = false;
+    messages = "Manual control disabled (AlwaysOn)";
+    switch1 = currentRelayState;
+    ArduinoCloud.update();
   }
 }
 
-// Callback function triggered when switch1 is changed from the cloud
-void onSwitch1Change() {
-  if (switch1 == 1) {
-    digitalWrite(RelayPin, LOW); // Relay ON
-    Serial.println("Relay ON");
+void onMessagesChange() {
+  String response;
+
+  if (messages.equalsIgnoreCase("Relay On")) {
+    alwaysOnMode = false;
+    digitalWrite(RELAY_PIN, LOW);
+    switch1 = true;
+    response = "Relay ON by command";
+  } else if (messages.equalsIgnoreCase("Relay Off")) {
+    alwaysOnMode = false;
+    digitalWrite(RELAY_PIN, HIGH);
+    switch1 = false;
+    response = "Relay OFF by command";
+  } else if (messages.equalsIgnoreCase("alwaysOn")) {
+    alwaysOnMode = true;
+    response = "AlwaysOn Enabled";
+  } else if (messages.equalsIgnoreCase("alwaysOff")) {
+    alwaysOnMode = false;
+    response = "AlwaysOn Disabled";
   } else {
-    digitalWrite(RelayPin, HIGH); // Relay OFF
-    Serial.println("Relay OFF");
+    response = "IoT Cam Relay v2.0 \nby John Varghese (@Cyber__Trinity)\n | Valid Commands: Relay on/off, AlwaysOn/AlwaysOff, help/about\n | Status auto-synced";
   }
+
+  messages = response;
+  ArduinoCloud.update();
 }
