@@ -160,12 +160,6 @@ Please open issues for bug reports or feature requests, and submit pull requests
 
 ---
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
----
-
 **Made with ❤️ by John Varghese (@Cyber__Trinity).**
 
 ---
