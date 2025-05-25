@@ -153,7 +153,7 @@ void onMessagesChange() {
     alwaysOnMode = false;
     response = "AlwaysOn Disabled";
   } else {
-    response = "IoT Cam Relay v2.0 \nby John Varghese (@Cyber__Trinity)\n | Valid Commands: Relay on/off, AlwaysOn/AlwaysOff, help/about\n | Status auto-synced";
+    response = "IoT Relay v2.0 \nby John Varghese (@Cyber__Trinity)\n | Valid Commands: Relay on/off, AlwaysOn/AlwaysOff, help/about\n | Status auto-synced";
   }
 
   messages = response;
