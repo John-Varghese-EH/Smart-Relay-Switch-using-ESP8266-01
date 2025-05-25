@@ -45,13 +45,13 @@ Control your appliances manually, remotely, or by voice with Google Home and Ale
 
 ---
 
-## Wiring Diagram
+<!-- ## Wiring Diagram 
 
 
 
 > **Note:** Use logic level shifters if your relay requires 5V signals.
 
----
+--- -->
 
 ## Installation & Setup
 
