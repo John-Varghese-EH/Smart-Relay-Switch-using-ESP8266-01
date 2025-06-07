@@ -5,7 +5,7 @@ Control your appliances manually, remotely, or by voice with Google Home and Ale
 
 ---
 
-## Table of Contents
+## Table of Contents 
 
 - [Features](#features)
 - [Hardware Requirements](#hardware-requirements)
