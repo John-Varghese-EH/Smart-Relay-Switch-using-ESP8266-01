@@ -1,4 +1,4 @@
-# Smart Relay Switch ESP8266-01
+# Smart Relay Switch using ESP8266-01
 
 A robust, cloud-connected smart relay switch using the ESP8266-01 and Arduino IoT Cloud.  
 Control your appliances manually, remotely, or by voice with Google Home and Alexa. Monitor real-time status, enjoy advanced features like watchdog protection and Always-On mode, and integrate seamlessly with your smart home ecosystem.
