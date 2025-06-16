@@ -3,6 +3,9 @@
 A robust, cloud-connected smart relay switch using the ESP8266-01 and Arduino IoT Cloud.  
 Control your appliances manually, remotely, or by voice with Google Home and Alexa. Monitor real-time status, enjoy advanced features like watchdog protection and Always-On mode, and integrate seamlessly with your smart home ecosystem.
 
+[![Platform](https://img.shields.io/badge/platform-ESP8266-blue.svg)](https://www.espressif.com/en/products/socs/esp8266)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 ---
 
 ## Table of Contents 
@@ -17,7 +20,7 @@ Control your appliances manually, remotely, or by voice with Google Home and Ale
 - [Cloud Commands](#cloud-commands)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [License](#license)
+- [License](LICENSE)
 
 ---
 
